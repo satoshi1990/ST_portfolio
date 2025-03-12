@@ -1,0 +1,174 @@
+{% extends 'base.html' %}
+{% block contents %}
+{% load static %}
+
+<h4 class="mt-5 mb-4 border-bottom">ポケモンカードポケット カードDB</h4>
+
+<div class="container-fluid">
+  {% csrf_token %}
+  <form  action="{% url 'app_folder:app1_index' %}" method="get">
+
+  <div class="row col-12">
+    {# 検索条件 #}
+    <div class="card card-body col-md-12">
+      {# 1段目 #}
+      <div class="form-group row">
+        {# カード名 #}
+        <div class="col-5">
+          <label for="input_name">カード名</label>
+          <input class="form-control" type="text" id="input_name" name="input_name" maxlength="50" placeholder="カード名" value={{ request.GET.input_name}}>
+        </div>
+        {# ID #}
+        <div class="col-5">
+          <label for="input_id">ID</label>
+          <input class="form-control" type="number" id="input_id" name="input_id" min="1" max="9999" placeholder="数字を入力" value={{ request.GET.input_id}}>
+        </div>      
+      </div>
+
+      {# 2段目 #}
+      <div class="form-group row">
+        {# パック #}
+        <div class="col-5">
+          <label for="input_pack_code">パック</label>
+          <select class="form-control" id="input_pack_code" name="input_pack_code">
+            <option selected disabled value="">選択してください</option>
+            {% for key, value in packnamedict.items %}
+              <option value="{{ key }}" type="text" {% if request.GET.input_pack_code == key %}selected{% endif %}>{{ value }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        {# スペース #}
+        <div class="col-1"></div>
+        {# ex #}
+        <div class="col-2 mt-4">
+          <input type="checkbox" type="number" class="form-check-input" id="input_ex" name="input_ex" {% if request.GET.input_ex == "on" %} checked {% endif %}>
+          <label class="form-check-label" for="input_ex">exカード</label>
+        </div>
+      </div>
+
+      {# 3段目 #}
+      <div class="form-group row">
+        {# タイプ #}
+        <div class="col-3">
+          <label for="input_element">タイプ</label>
+          <select class="form-control" id="input_element" name="input_element" >
+          <option  selected disabled value="">選択してください</option>
+          {% for key, value in card_elementdict.items %}
+            <option value="{{ key }}" {% if request.GET.input_element == key %} selected {% endif %}>{{ value }}</option>
+          {% endfor %}
+          </select>
+        </div>
+          
+        {# カード種類 #}
+        <div class="col-3">
+          <label for="input_card_category">カード種類</label>
+          <select class="form-control" id="input_card_category" name="input_card_category">
+            <option  selected disabled value="">選択してください</option>
+            {% for key, value in card_categorydict.items %}
+              <option value="{{ key }}" {% if request.GET.input_card_category == key %} selected {% endif %}>{{ value }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        
+        {# カードクラス #}
+        <div class="col-3">
+          <label for="input_card_class">カードクラス</label>
+          <select class="form-control" id="input_card_class" name="input_card_class">
+            <option selected disabled value="">選択してください</option>
+            {% for key, value in card_classdict.items %}
+              <option value="{{ key }}" {% if request.GET.input_card_class == key %} selected {% endif %}>{{ value }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+
+      {# 検索 段 #}
+      <div class="form-group mt-3 mb-0 row">
+        {# 検索/clearボタン #}
+        <div class="text-right align-bottom col-12">
+          <div class="col-3"></div>
+          <button type="submit" id="btn_search" name="btn_search" value="btn_search" class="btn btn-info col-2">検索</button>
+          <button type="button" id="btn_clear" name="btn_clear" class="btn btn-danger col-2">クリア</button>
+        </div>
+      </div>
+
+    </div>{# card #}
+  </div>
+  </form>
+
+
+  <div class="row mt-2">
+    <div class="text-right col-12">
+      <a class='mt-1 mt-md-0 col-md-2 mr-md-1' href="?create=1">レコード新規登録</a>
+
+    {% comment %} <img src="{% static 'images/app1/elements/grass.png' %}"> {% endcomment %}
+    {% comment %} <img src="/static/images/app1/elements/grass.png"> {% endcomment %}
+    {% comment %} {% for key, value in packnamelist.items %} {% endcomment %}
+    </div>
+  </div>
+
+  <!-- 明細表示 -->
+  <div class="row mt-1">
+    <table class="table text-nowrap table-hover">  
+      <thead class="text-center">
+        <tr>
+          <th style="width:7%">ID</th>
+          <th style="width:10%">名前</th>
+          <th style="width:10%">カードの<br/>種類</th>
+          <th style="width:10%">分類</th>
+          <th style="width:5%">タイプ</th>
+          <th style="width:7%">HP</th>
+          <th style="width:20%">収録パック</th>
+          <th style="width:8%">パックNo</th>
+          <th style="width:5%">レア度</th>
+          <th style="width:8%">余白</th>
+          <th style="width:8%">修正</th>
+        </tr>
+      </thead>
+      {% if  records|length != 0 %}
+      <tbody>
+        {% for record in records %}
+        <tr>
+            <td class="text-center">{{record.all_card_id}}</td>
+            <td class="text-left">{{record.name}}</td>
+            <td class="text-center">{{ record.card_category }}</td>
+            <td class="text-center">{{ record.card_class }}</td>
+            <td class="text-center">{{ record.element }}</td>
+            <td class="text-center">{{ record.hp }}</td>
+            <td class="text-left">{{ record.pack_name }}</td>
+            <td class="text-center">{{ record.pack_card_id }}</td>
+            <td class="text-center">{{ record.rarity }}</td>
+            {# <td class="text-center">{{ record.ex|yesno:"'〇','×'" }}</td> #}
+            <td class="text-center"><a href="">詳細</a></td>
+            <td class="text-center"><a href="?edit={{ record.all_card_id }}">修正</a></td>
+          </tr>
+        {% endfor %}
+      </tbody>
+      {% else %}
+        <div class="alert alert-warning col-12" role="alert">対象データがありません</div>
+      {% endif %}
+    </table>
+  </div>
+
+  <!-- ページネーション -->
+  {% include "include/pagination_block.html" %}
+
+</div>
+{% endblock contents %}
+
+{% block extra_js %}
+<script>
+
+  $(document).on("click", "#btn_clear", function(){
+    $("#input_name").val(null);
+    $("#input_id").val(null);
+    $('#input_test').val(null);
+    $("#input_pack_code").val(null);
+    $('#input_ex').prop('checked', false);
+    $('#input_element').val(null);
+    $("#input_card_category").val(null)
+    $("#input_card_class").val(null)
+  });
+
+</script>
+{% endblock extra_js %}

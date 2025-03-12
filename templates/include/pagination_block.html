@@ -1,0 +1,110 @@
+{% comment %} 
+
+・分岐について
+A 全10P以下
+ 全P表示 
+B 全11P以上 
+ パターン1 [1,2,3,4,5,6..11,13] ※現在Pが3にいる場合
+ パターン2 [1,2..7,8,9,11,13] ※現在Pが9にいる
+ パターン3 [1,2...4,5,6,7,8,9,10...11,13] ※現在Pが7にいる
+          [1,2,3,4,5,6,7,8,9,10,11] ※総Pが11かつ現在Pが6にいる場合,[...]は非表示
+
+・共通化の関係上、Templateタグ,フィルタのみで実装(js使えばよかった...)
+　そのためマジックナンバーが非常に多いので,その都度注釈あり
+
+{% endcomment %}
+
+{% load extra %}
+
+{% if page_obj.has_other_pages %}
+<div class="row mt-3 text-center ">
+    <div class="col-12">
+      {% if page_obj.has_previous %}
+        <a href="?{% url_replace request 'page' page_obj.previous_page_number %}"><<</a>
+      {% else %}
+        <span class="disabled" href="#}}"><<</span>
+      {% endif %}
+
+      {# A 10件以下は全件表示 #}
+      {% if page_obj.paginator.num_pages <= 10 %}
+        {% with ''|center:page_obj.paginator.num_pages as range %}
+        {% for _ in range %}
+          {% if forloop.counter != page_obj.number %}
+            <a href="?{% url_replace request 'page' forloop.counter %}">{{ forloop.counter }}</a>
+          {% else %}
+            <a>{{ forloop.counter }}</a>
+          {% endif %}
+        {% endfor %}
+        {% endwith %}
+      
+      {# B 11件以上は先頭と最後2件、現在Pを中心に中間7件(±3P分)の表示 #}
+      {% elif page_obj.paginator.num_pages >= 10 %}
+        {% if page_obj.number <= 5 %} {# 5は前方の表示境界値　(2は先頭表示件数 3は現在表示Pを中心に計7件の範囲で表示したいため。足して5) #}
+        {# パターン1  #}
+          {% with ''|center:page_obj.paginator.num_pages as range %}
+          {% for _ in range %}
+            {% if forloop.counter <= page_obj.number|add:"3" %} {# 自分の位置+3まで表示 #}
+              {% if forloop.counter != page_obj.number %}
+                <a class="m-1" href="?{% url_replace request 'page' forloop.counter %}">{{ forloop.counter }}</a>
+              {% else %}
+                <span class="m-1">{{ forloop.counter }}</span>
+              {% endif %}
+            {% endif %}
+          {% endfor %}
+          {% endwith %}
+
+          <span class="m-1" >...</span>
+          <a class="m-1" href="?{% url_replace request 'page' page_obj.paginator.num_pages|add:"-1" %}">{{ page_obj.paginator.num_pages|add:"-1" }}</a> {# -1はラストページ一つ手前のため #}
+          <a class="m-1" href="?{% url_replace request 'page' page_obj.paginator.num_pages %}"       >{{ page_obj.paginator.num_pages }}</a>
+
+        {% elif page_obj.number > page_obj.paginator.num_pages|add:"-5" %}{# -5件は後方の表示境界値 #}
+        {# パターン2 #}
+          <a class="m-1" href="?{% url_replace request 'page' 1 %}">1</a>
+          <a class="m-1" href="?{% url_replace request 'page' 2 %}">2</a>
+          <span class="m-1">...</span>
+          
+          {% with ''|center:page_obj.paginator.num_pages as range %}
+          {% for _ in range %}
+            {% if forloop.counter >= page_obj.number|add:"-3" %}{# 自分の位置-3~ラストまで表示 #}
+              {% if forloop.counter != page_obj.number %}
+                <a class="m-1" href="?{% url_replace request 'page' forloop.counter %}">{{ forloop.counter }}</a>
+              {% else %}
+                <span class="m-1">{{ forloop.counter }}</span>
+              {% endif %}
+            {% endif %}
+          {% endfor %}
+          {% endwith %}
+
+        {% else %}
+        {# パターン3 #}
+          <a class="m-1" href="?{% url_replace request 'page' 1 %}">1</a>
+          <a class="m-1" href="?{% url_replace request 'page' 2 %}">2</a>
+          {% if page_obj.number > 6 %} {# 現在Pが6の場合のみ,12345は先頭2件+前3件(現在Pの周辺計7件)で表示されるため前の...が不要 #}
+            <span class="m-1">...</span>
+          {% endif %}
+          
+          <a class="m-1" href="?{% url_replace request 'page' page_obj.number|add:"-3" %}" >{{ page_obj.number|add:"-3" }}</a>
+          <a class="m-1" href="?{% url_replace request 'page' page_obj.number|add:"-2" %}" >{{ page_obj.number|add:"-2" }}</a>
+          <a class="m-1" href="?{% url_replace request 'page' page_obj.number|add:"-1" %}" >{{ page_obj.number|add:"-1" }}</a>
+          <span class="m-1" >{{ page_obj.number }}</span>
+          <a class="m-1" href="?{% url_replace request 'page' page_obj.number|add:"+1" %}" >{{ page_obj.number|add:"+1" }}</a>
+          <a class="m-1" href="?{% url_replace request 'page' page_obj.number|add:"+2" %}" >{{ page_obj.number|add:"+2" }}</a>
+          <a class="m-1" href="?{% url_replace request 'page' page_obj.number|add:"+3" %}" >{{ page_obj.number|add:"+3" }}</a>
+
+          {% if page_obj.number < page_obj.paginator.num_pages|add:"-5" %} {# 上部の場合と単純に逆パターン #}
+            <span class="m-1">...</span>
+          {% endif %}
+          <a class="m-1" href="?{% url_replace request 'page' page_obj.paginator.num_pages|add:"-1" %}">{{ page_obj.paginator.num_pages|add:"-1" }}</a> {# -1はラストページ一つ手前のため #}
+          <a class="m-1" href="?{% url_replace request 'page' page_obj.paginator.num_pages %}"       >{{ page_obj.paginator.num_pages }}</a>
+        {% endif %}
+      {% endif %}
+
+      {% if page_obj.has_next %}
+        <a class="m-1" href="?{% url_replace request 'page' page_obj.next_page_number %}">>></a>
+        {% else %}
+        <span class="m-1">>></span>
+      {% endif %}
+    </div>
+</div>
+{% endif %}
+
