@@ -7,7 +7,7 @@
 <div class="container-fluid">
     {% if edit_all_card_id %}
         <h5>カード情報 の修正</h5>
-    {% else %} 
+    {% elif create_all_card_id %} 
         <h5>カード情報 の新規登録</h5>
     {% endif %}
 
@@ -18,21 +18,30 @@
             {% comment %} {{ form.as_table }} {% endcomment %}
             {{ form.non_field_errors }}
             {# 全体カードID #}
-            <tr>
+            {% comment %} <tr>
                 <th><label for="id_all_card_id">全体カードID:</label></th>
                 <td><input type="number" name="all_card_id" required="" disabled="" id="id_all_card_id" 
                     {% if edit_all_card_id %}
                         value={{ edit_all_card_id }}
-                    {% else %}
+                    {% elif create_all_card_id %}
                         value={{ create_all_card_id }}
                     {% endif %}
-                    ></td>      
-            </tr>
+                    ></td>
+                    <td>{{ form.all_card_id.errors }}</td>
+            </tr> {% endcomment %}
+            {# 全体カードID #}
+            <div class="field">
+                <tr>
+                    <th>{{ form.all_card_id.label_tag }}</th>
+                    <td>{{ form.all_card_id }}</td>
+                    <td>{{ form.all_card_id.errors }}</td>
+                </tr>
+            </div>
             {# カード名 #}
             <div class="field">
                 <tr>
                     <th>{{ form.name.label_tag }}</th>
-                    <td>{{ form.name }}</td>
+                    <td >{{ form.name }}</td>
                     <td>{{ form.name.errors }}</td>
                 </tr>
             </div>
@@ -47,9 +56,9 @@
             {# パック名 #}
             <div class="field">
                 <tr>
-                    <th>{{ form.pack_name.label_tag }}</th>
-                    <td>{{ form.pack_name }}</td>
-                    <td>{{ form.pack_name.errors }}</td>
+                    <th>{{ form.pack_code.label_tag }}</th>
+                    <td>{{ form.pack_code }}</td>
+                    <td>{{ form.pack_code.errors }}</td>
                 </tr>
             </div>
             {# パック内カードNo #}
@@ -102,7 +111,7 @@
         <div class="align-bottom field">
             {% if edit_all_card_id %}
                 <button type="submit" id="btn_edit" name="btn_edit" value="btn_edit" class="btn btn-info col-1">送信</button>
-            {% else %}
+            {% elif create_all_card_id %}
                 <button type="submit" id="btn_create" name="btn_create" value="btn_create" class="btn btn-info col-2">送信</button>
             {% endif %}
         </div>
@@ -118,50 +127,6 @@ $(function(){
         $(".errorlist li").css({
             'color': 'Red'  // 2ハイフン形式で指定
         });
-//            'color', 'Red');
-//    }
-    // カテゴリが2の時,クラス1~3と属性は選べない
-//s    $(document).on("change", "#id_card_category", function(){
-//s        console.log("chenge1");
-//s        var arr_class_pokemon = [1,2,3]
-//s        var arr_class_trainer = [4,5,6]
-//s        var category_val = $("#id_card_category").val();
-//s        var class_val = $("#id_card_class").val();
-//s
-//s
-//s
-//s        if (category_val == 1)
-//s            console.log("category_pokemon");
-//s
-//s        else if (category_val == 2)
-//s            console.log("trainer");
-//s    });
-//    $("#id_card_category").change(function(){
-//        console.log("chenge2");
-//    });
-
-
-    // $('.dotnet').css({
-    //     fontSize: '16pt',           // 1camelCase形式で指定
-    //     'background-color': 'Red'  // 2ハイフン形式で指定
-    //   });
-
-
-//    ul.errorlist {
-//        margin: 0;
-//        padding: 0;
-//    }
-//    .errorlist li{
-//        border: .1rem solid #f00;
-//        color: #f00;
-//        background: rgba(255, 0, 0, .15);
-//        list-style-position: inside;
-//        display: block;
-//        padding: 1rem;
-//        text-align: left;
-//        border-radius: .3rem;
-//    }
-
 });
 </script>
 {% endblock extra_js %}
