@@ -2,6 +2,7 @@
 {% block contents %}
 {% load static %}
 
+<div class="row mt-5"></div>
 <h4 class="mt-5 mb-4 border-bottom">ポケモンカードポケット カードDB</h4>
 
 <div class="container-fluid">
@@ -87,7 +88,7 @@
         {# 検索/clearボタン #}
         <div class="text-right align-bottom col-12">
           <div class="col-3"></div>
-          <button type="submit" id="btn_search" name="btn_search" value="btn_search" class="btn btn-info col-2">検索</button>
+          <button type="submit" id="btn_search" name="btn_search" value="btn_search" class="btn btn-success col-2">検索</button>
           <button type="button" id="btn_clear" name="btn_clear" class="btn btn-danger col-2">クリア</button>
         </div>
       </div>
@@ -100,10 +101,6 @@
   <div class="row mt-2">
     <div class="text-right col-12">
       <a class='mt-1 mt-md-0 col-md-2 mr-md-1' href="?create=1">レコード新規登録</a>
-
-    {% comment %} <img src="{% static 'images/app1/elements/grass.png' %}"> {% endcomment %}
-    {% comment %} <img src="/static/images/app1/elements/grass.png"> {% endcomment %}
-    {% comment %} {% for key, value in packnamelist.items %} {% endcomment %}
     </div>
   </div>
 
@@ -117,32 +114,37 @@
           <th style="width:10%">カードの<br/>種類</th>
           <th style="width:10%">分類</th>
           <th style="width:5%">タイプ</th>
-          <th style="width:7%">HP</th>
           <th style="width:20%">収録パック</th>
           <th style="width:8%">パックNo</th>
           {% comment %} <th style="width:5%">レア度</th> {% endcomment %}
           <th style="width:5%">ex</th>
-          <th style="width:8%">詳細</th>
-          <th style="width:8%">修正</th>
+          <th style="width:6%"></th>
+          <th style="width:6%"></th>
+          <th style="width:6%"></th>
         </tr>
       </thead>
+      {% if delete_executed_flg %}
+      <div class="alert alert-warning col-12" role="alert">指定されたデータを削除しました</div>
+      {% endif %}
       {% if  records|length != 0 %}
       <tbody>
         {% for record in records %}
         <tr>
-            <td class="text-center">{{record.all_card_id}}</td>
-            <td class="text-left">{{record.name}}</td>
-            <td class="text-center">{{ record.card_category }}</td>
-            <td class="text-center">{{ record.card_class }}</td>
-            <td class="text-center">{{ record.element }}</td>
-            <td class="text-center">{{ record.hp }}</td>
-            <td class="text-left">{{ record.pack_name }}</td>
-            <td class="text-center">{{ record.pack_card_id }}</td>
-            {% comment %} <td class="text-center">{{ record.rarity }}</td> {% endcomment %}
-            <td class="text-center">{{ record.ex|yesno:"〇,×" }}</td>
-            <td class="text-center"><a href="">詳細</a></td>
-            <td class="text-center"><a href="?edit={{ record.all_card_id }}">修正</a></td>
-          </tr>
+          <td class="text-center">{{record.all_card_id}}</td>
+          <td class="text-left">{{record.name}}</td>
+          <td class="text-center">{{ record.card_category }}</td>
+          <td class="text-center">{{ record.card_class }}</td>
+          <td class="text-center">{{ record.element }}</td>
+          <td class="text-center">{{ record.pack_name }}</td>
+          <td class="text-center">{{ record.pack_card_id }}</td>
+          {% comment %} <td class="text-center">{{ record.rarity }}</td> {% endcomment %}
+          <td class="text-center">{{ record.ex|yesno:"〇,×" }}</td>
+          <td><button type="button" id="btn_detail" name="btn_detail" class="btn btn-link " data-nameenglish={{ record.name_english }} data-id={{ record.all_card_id }} data-bs-toggle="modal" data-bs-target="#carddetailModal-{{record.all_card_id}}">詳細</button></td>
+          <td class="text-center align-middle"><a href="?edit={{ record.all_card_id }}">修正</a></td>
+          <td class="text-center align-middle"><button type="button" id="btn_predelete" name="btn_predelete" class="btn btn-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal-{{record.all_card_id}}">削除</button></td>
+        </tr>
+        {% include 'include/modal_carddetail.html' %}
+        {% include 'include/modal_predelete.html' %}
         {% endfor %}
       </tbody>
       {% else %}
@@ -152,8 +154,11 @@
   </div>
 
   <!-- ページネーション -->
-  {% include "include/pagination_block.html" %}
+  {% include "include/block_pagination.html" %}
 
+  
+
+  <div class="row mb-4"></div>
 </div>
 {% endblock contents %}
 
@@ -170,5 +175,23 @@
     $("#input_card_class").val(null)
   });
 
+  $(document).on("click", "#btn_detail", function(){
+    const detailId = $(this).data('id');
+    const nameEnglish = $(this).data('nameenglish');
+
+    $.ajax({
+        url:'https://pokeapi.co/api/v2/pokemon/'+ nameEnglish +'/',
+        //url:'https://pokeapi.co/api/v2/pokemon/'+ 'Metapod' +'/',
+        type:'GET',
+        datatype:'json',
+        success:function(data){
+
+            $('#cardDetailImg-'+detailId).attr('src', data.sprites.front_default);
+        },
+        error:function(){
+            console.log('エラーが発生しました');
+        }
+    });
+  });
 </script>
 {% endblock extra_js %}

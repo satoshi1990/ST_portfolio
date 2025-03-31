@@ -1,9 +1,15 @@
 from django.conf import settings
 
+
 ### 定数 ###
  
 # ページ内表示レコード数
-per_page_num = 25 
+per_page_num = 50
+
+# 各データセットディレクトリ
+filedir_pokedex = "./dataset/pokedex/*.csv" 
+filedir_card_summary = "./dataset/card_summary/*.csv" 
+filedir_card_detail = "./dataset/card_detail/*.csv" 
 
 # パックコードとパック名の対照
 packNameDict = {
@@ -17,6 +23,7 @@ packNameDict = {
     'A2d' : '時空の激闘 ディアルガ',
     'A2p' : '時空の激闘 パルキア',
     'A2a' : '超克の光',
+    'A2b' : 'シャイニングハイ',
 }
 
 # カードカテゴリ番号とカテゴリ名の対照

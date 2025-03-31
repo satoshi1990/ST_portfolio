@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+{% extends 'base.html' %}
+{% block contents %}
+{% load static %}
+
+{% comment %} <head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+</head> {% endcomment %}
+
+<div class="row mt-5"></div>
+<h4 class="mt-5 mb-4 border-bottom">Random Pokemon</h4>
+
+<div class="container-fluid">
+    <h1>ランダムなポケモンの表示</h1>
+    <button id="fetchButton">ポケモンを取得</button>
+    <button id="imgChengeButton" style="display: none;">画像を切り替え</button>
+    <div id='pokemonInfo'>
+        <p id='pokedexId'></p>
+        <h2 id='pokemonNameJa'></h2>
+        <p id='pokemonNameEng'></p>
+        <img id='pokemonImage' alt="">
+        <p id='pokemonGenera'></p>
+        <p id='pokemonTypes'></p>
+        <p id='pokemonHeight'></p>
+        <p id='pokemonWeight'></p>
+        <p id='pokedexFlavorText'></p>
+    </div>
+</div>
+
+{% endblock contents %}
+
+{% block extra_js %}
+<script>
+    let pokemonId = 0;
+    let imgViewStatus = "default";
+    let pokedexTextList = [];//図鑑説明文と表示ソフトが入る
+
+    $('#fetchButton').click(function() {
+        pokemonId = Math.floor(Math.random() * 1025) + 1;
+        //pokemonId = 916;
+        $.ajax({
+            url:'https://pokeapi.co/api/v2/pokemon/'+ pokemonId +'/',
+            //url:'https://pokeapi.co/api/v2/pokemon/${pokemonId}/',
+            type:'GET',
+            datatype:'json',
+            success:function(data){
+                console.log(data);//言語を問わない概要データが出力される(図鑑番号や高さなど)
+
+                // ローカライズ情報取得(ポケモン名,図鑑)
+                $.ajax({
+                    url:data.species.url,
+                    type:'GET',
+                    datatype:'json',
+                    success: function(speciesData){
+                        // console.log(speciesData); //各言語のobjectデータが出力される
+                        
+                        // ポケモン名(日本語)
+                        const pokemonNameJa = speciesData.names.find((element) => element.language.name==='ja').name;
+                        $('#pokemonNameJa').text(pokemonNameJa);
+
+                        // ポケモン図鑑フレーバーテキスト取得
+                        pokedexTextList = []
+                        speciesObjectList = speciesData.flavor_text_entries
+                        for(var item of speciesObjectList){
+                            if((item.language.name==='ja') || (item.language.name==='ja-Hrkt')){
+                                let tmp = {}
+                                tmp['flavor_text'] =  item.flavor_text;
+                                tmp['version'] =  item.version.name;
+                                pokedexTextList.push(tmp);
+                            }
+                        }
+                        if(pokedexTextList.length > 0){
+                            $('#pokedexFlavorText').text(pokedexTextList[0].flavor_text)//最初の1件のみ表示
+                            $('#pokedexFlavorText').css({'color': 'Black'});
+                        }else{
+                            $('#pokedexFlavorText').text('※図鑑説明はまだ登録されていません')//最初の1件のみ表示
+                            $('#pokedexFlavorText').css({'color': 'Red'});
+                        }
+
+                        // 分類取得
+                        pokedexGenera = speciesData.genera.find((element) => element.language.name==='ja-Hrkt').genus;
+                        $('#pokemonGenera').text('分類:'+ pokedexGenera);
+
+                    }
+                });
+                // 全国図鑑ID
+                $('#pokedexId').text('No:'+pokemonId.toString().padStart( 4, '0'));
+
+                // ポケモン名(英語)
+                $('#pokemonNameEng').text('英名:[ ' + data.name + ' ]');
+
+                // 高さ
+                $('#pokemonHeight').text('高さ:'+ (data.height / 10) + 'm')
+
+                // 重さ
+                $('#pokemonWeight').text('重さ:'+ (data.weight / 10) + 'kg')
+
+                // // 画像_ショウダウン(リッチ画像)がなければデフォルト画像をセット
+                let imgsrc = "";
+                if(data.sprites.other.showdown.front_default){
+                    imgViewStatus = "showdown";
+                    $('#imgChengeButton').show();
+                    imgsrc = data.sprites.other.showdown.front_default;
+                }else{
+                    imgsrc = data.sprites.front_default;
+                    $('#imgChengeButton').hide();
+                }
+                $('#pokemonImage').attr('src', imgsrc);
+
+                // タイプ(日本語)
+                const types = data.types.map(type => type.type.name).join(', ');
+                $('#pokemonTypes').text('タイプ:'+ types);
+            },
+            error:function(){
+                console.log('エラーが発生しました');
+            }
+        });
+    });
+
+    $('#imgChengeButton').click(function() {
+        $.ajax({
+            url:'https://pokeapi.co/api/v2/pokemon/'+ pokemonId +'/',
+            type:'GET',
+            datatype:'json',
+            success:function(data){
+                console.log(data);
+                // 画像切り替え
+                if(imgViewStatus=="showdown"){
+                    imgViewStatus="default";
+                    $('#pokemonImage').attr('src', data.sprites.front_default);
+
+                }else if(imgViewStatus=="default"){
+                    $('#pokemonImage').attr('src', data.sprites.other.showdown.front_default);
+                    imgViewStatus="showdown";
+                }
+            },
+            error:function(){
+                console.log('エラーが発生しました');
+            }
+        });
+    });
+
+</script>
+{% endblock extra_js %}

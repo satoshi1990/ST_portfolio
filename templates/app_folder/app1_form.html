@@ -2,7 +2,7 @@
 {% block contents %}
 {% load static %}
 
-<h4 class="mt-5 mb-4 border-bottom">ポケモンカードポケット カードDB</h4>
+<P>　</P><h4 class="mt-5 mb-4 border-bottom">ポケモンカードポケット カードDB</h4>
 
 <div class="container-fluid">
     {% if edit_all_card_id %}
@@ -11,24 +11,9 @@
         <h5>カード情報 の新規登録</h5>
     {% endif %}
 
-    <form action="{% url 'app_folder:app1_index' %}" method="post">
-        {% comment %} <table> {% endcomment %}
+    <form action="{% url 'app_folder:app1_index' %}" method="post">{% csrf_token %}
         <table class="table-hover">
-            {% csrf_token %}
-            {% comment %} {{ form.as_table }} {% endcomment %}
             {{ form.non_field_errors }}
-            {# 全体カードID #}
-            {% comment %} <tr>
-                <th><label for="id_all_card_id">全体カードID:</label></th>
-                <td><input type="number" name="all_card_id" required="" disabled="" id="id_all_card_id" 
-                    {% if edit_all_card_id %}
-                        value={{ edit_all_card_id }}
-                    {% elif create_all_card_id %}
-                        value={{ create_all_card_id }}
-                    {% endif %}
-                    ></td>
-                    <td>{{ form.all_card_id.errors }}</td>
-            </tr> {% endcomment %}
             {# 全体カードID #}
             <div class="field">
                 <tr>
@@ -101,18 +86,14 @@
                     <td>{{ form.ex.errors }}</td>
                 </tr>
             </div>
-                    {% comment %} <div class="invalid-feedback">カテゴリがトレーナーの時、クラスは[サポート,グッズ,かせき]から選択してください</div> {% endcomment %}
-                    {% comment %} <span class="helptext">{{ form.element.help_text }}</span> {% endcomment %}
-                    {% comment %} <span class="helptext">{{ form.ex.help_text }}</span> {% endcomment %}
-
         </table>
 
         {# 送信ボタン #}
         <div class="align-bottom field">
             {% if edit_all_card_id %}
-                <button type="submit" id="btn_edit" name="btn_edit" value="btn_edit" class="btn btn-info col-1">送信</button>
+                <button type="submit" id="btn_edit" name="btn_edit" value="btn_edit" class="btn btn-success col-1">送信</button>
             {% elif create_all_card_id %}
-                <button type="submit" id="btn_create" name="btn_create" value="btn_create" class="btn btn-info col-2">送信</button>
+                <button type="submit" id="btn_create" name="btn_create" value="btn_create" class="btn btn-success col-2">送信</button>
             {% endif %}
         </div>
     </form>
@@ -124,9 +105,16 @@
 {% block extra_js %}
 <script>
 $(function(){
-        $(".errorlist li").css({
-            'color': 'Red'  // 2ハイフン形式で指定
-        });
+    $(".errorlist li").css({
+        'color': 'Red'  
+    });
 });
+
+// 二重submit無効
+$("form").on("submit", function onsubmit (event) {
+    $(this).off("submit", onsubmit).on("submit", false);
+    console.log("btn off")
+});
+
 </script>
 {% endblock extra_js %}

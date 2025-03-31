@@ -1,0 +1,22 @@
+<div class="modal fade" tabindex="-1" role="dialog" id="deleteModal-{{record.all_card_id}}">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">データの削除</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>削除すると元に戻すことはできません。よろしいでしょうか？</p>
+            </div>
+            <div class="modal-footer">
+                <form action="{% url 'app_folder:app1_index' %}" method="post">{% csrf_token %}
+                    <input class="form-control" type="hidden" id="delete_id" name="delete_id" value={{ record.all_card_id }}>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">閉じる</button>
+                    <button type="submit" class="btn btn-danger" id="btn_delete" name="btn_delete" value="{{ record.all_card_id }}">削除</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

@@ -9,13 +9,13 @@
   <head>
     <meta charset="utf-8">
     <link rel="stylesheet" type='text/css' href="{% static 'css/style.css'%}">
-    <link rel="stylesheet" href="https://cccabinet.jpn.org/bootstrap4/css/style.css">
+    {% comment %} <link rel="stylesheet" href="https://cccabinet.jpn.org/bootstrap4/css/style.css"> {% endcomment %}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     
     <title> ST_portfolio </title>
 
     {% block extra_css %}{% endblock %}
-
-</head>
+  </head>
 
   <body>
     <!-- ↓↓１番上のナビゲーションバー↓↓ -->
@@ -24,7 +24,7 @@
         <div class="col-12">
           <nav class="navbar navbar-expand-lg fixed-top navbar-dark bs-navbar" style='background-color:cadetblue;' id="bs-navbar">
             <a class="navbar-brand mr-md-2" href="/app_folder/top_page">
-              サンプル開発画面
+              ST_portfolio
             </a>
               <!-- ↓↓レイアウトを調整する為のダミー↓↓ -->
               <ul class="navbar-nav mr-auto">
@@ -33,13 +33,13 @@
               </ul>
               <!-- ↑↑ダミーここまで↑↑ -->                            
 
-              <ul class="navbar-nav">
+              {% comment %} <ul class="navbar-nav">
                 <li class="nav-item"><a class="nav-link" href="/#" >サンプル１</a></li>
                 <li class="nav-item"><a class="nav-link" href="/#" >サンプル２</a></li>
                 <li class="nav-item"><a class="nav-link" href="/#" >サンプル３</a></li>
                 <li class="nav-item"><a class="nav-link" href="/accounts/login" >ログイン</a></li>
                 <li class="nav-item"><a class="nav-link" href="/accounts/logout" >ログアウト</a></li>
-              </ul>
+              </ul> {% endcomment %}
             </div>
           </nav>
         </div>
@@ -65,22 +65,22 @@
               </li>
               <li class="nav-item">
                 <nav class="navbar navbar-light bg-light">
-                  <a class='navbar-brand' href='/app_folder/app1_index/'>
-                    <span data-feather=""></span>app1_pokepoke DB
+                  <a class="navbar-brand" href="/app_folder/top_page/">
+                    <span data-feather=""></span>DB initial
                   </a>
                 </nav>
               </li>
               <li class="nav-item">
                 <nav class="navbar navbar-light bg-light">
-                  <a class='navbar-brand' href='/#'>
-                    <span data-feather=""></span>ページ２
+                  <a class='navbar-brand' href='/app_folder/app1_index/'>
+                    <span data-feather=""></span>app1_pokepoke DB
                   </a>
                 </nav>
               </li>         
               <li class="nav-item">
                 <nav class="navbar navbar-light bg-light">
-                  <a class='navbar-brand' href='/#'>
-                    <span data-feather=""></span>ページ３
+                  <a class='navbar-brand' href='/app_folder/app2_top/'>
+                    <span data-feather=""></span>app2_POKE_API
                   </a>
                 </nav>
               </li>         
@@ -114,6 +114,7 @@
     </div>
     
     <script src="https://code.jquery.com/jquery-3.6.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>
     {% block extra_js %}
     {% endblock %}
   </body>

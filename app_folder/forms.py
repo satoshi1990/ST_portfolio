@@ -156,8 +156,8 @@ class CardUpdateForm(CardRegisterForm):
         return all_card_id
     
     # pack_card_id
-    # 登録時、入力されたパック名+パックIDが被った場合はエラー 
-    # だが、被ったレコードのall_card_idが編集しているformの同fieldのinitialと同じ場合は問題ない
+    # 登録時、入力されたパック名+パックIDが重複した場合はエラー 
+    # だが、重複したレコードのall_card_idが、編集しているformの同fieldのinitialと同じ場合 は問題ない
     def clean_pack_card_id(self):    
         print("IN clean_pack_card_id")
         pack_code = self.cleaned_data["pack_code"]
@@ -165,10 +165,6 @@ class CardUpdateForm(CardRegisterForm):
 
         result = Card_summary.objects.filter(pack_code=pack_code, pack_card_id=pack_card_id).exists()
 
-        # 想定パターン
-        # ok 入力値が何とも被らない
-        # ok 入力値が編集しているレコードと被ってヒットするが、他レコードとは被らない
-        # ng 入力値が他レコードと被る
         if result:
             result2 = Card_summary.objects.get(pack_code=pack_code, pack_card_id=pack_card_id)
             if result2.all_card_id != int(self['all_card_id'].initial):

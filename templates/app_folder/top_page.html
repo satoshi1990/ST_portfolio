@@ -1,24 +1,70 @@
+<!DOCTYPE html>
 {% extends 'base.html' %}
 {% block contents %}
+{% load static %}
 
-<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center mt-5 border-bottom">
-    <h1 class="h2">ST_portfolios</h1>
+{% comment %} <head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+</head> {% endcomment %}
+
+<div class="row mt-5"></div>
+<h4 class="mt-5 mb-4 border-bottom">DB initial</h4>
+
+<div class="container-fluid">
+    {% csrf_token %}
+    <form  action="{% url 'app_folder:top_page' %}" method="get">
+    <h1>ST_portfolioの初期設定</h1>
+    <div class="row col-12">
+        {% if complete_text %}
+            <div class="alert alert-warning col-12" role="alert">{{ complete_text }}</div>
+        {% endif%}
+        {% if ng_text %}
+            <div class="alert alert-warning col-12" role="alert">{{ ng_text }}</div>
+        {% endif%}
+
+        <div class="card card-body col-md-12">
+            <div class="form-group row">
+                {# 1 #}
+                <div class="col-6">
+                    <div>専用ディレクトリ内に配置されたcsv(全国ずかん情報)からデータを読み込みます</div>
+                    <button type="submit" id="btn_DBInit_pokedex" name="btn_DBInit_pokedex" value="btn_DBInit_pokedex">1.ずかんデータ反映</button>
+                </div>   
+                {# 2 #}
+                <div class="col-6">
+                    <div>専用ディレクトリ内に配置されたcsv(カード情報)からデータを読み込みます</div>
+                    <button type="submit" id="btn_DBInit_card" name="btn_DBInit_card" value="btn_DBInit_card">2.カードデータ反映</button>
+                </div>    
+            </div>
+            <div class="form-group row">
+                {# 3 #}
+                <div class="col-6">
+                    <div>pokedexテーブルからcard_summaryテーブルに英名を読み込み,画像取得ができるようにします(※全国図鑑807以下のみ)</div>
+                    <button type="submit" id="btn_fetchNameE" name="btn_fetchNameE" value="btn_fetchNameE">3.英語名を取得</button>
+                    {% comment %} <p>最終適用日付：20XX:XX:XX</p> {% endcomment %}
+                </div>      
+            </div>
+            <div class="form-group row">
+                {# 9 #}
+                <div class="col-6">
+                    <div class="text-danger">※テーブルに登録されたレコードを削除し、1~3の機能を再度実行できるようにします</div>
+                    <button type="submit" id="btn_tables_reset" name="btn_tables_reset" value="btn_tables_reset">アプリ内レコードを全削除</button>
+                    {% comment %} <p>最終適用日付：20XX:XX:XX</p> {% endcomment %}
+                </div>      
+            </div>
+        </div>
+    </div>
+    </form>
 </div>
 
-<div>
-    <h4>app1_Djangoの基本的なDB操作 CRUD and search</h4>
-</div>
-<div>
-    <h4>app2_ルーティング理解</h4>
-</div>
-<div>
-    <h4>app3_マップ</h4>
-</div>
-<div>
-    <h4>app4_説明文</h4>
-</div>
-<div>
-    <h4>app5_趣味の写真か、関連のツール</h4>
-</div>
+{% endblock contents %}
 
-{% endblock %}
+{% block extra_js %}
+<script>
+    // 二重submit無効
+    $("form").on("submit", function onsubmit (event) {
+        $(this).off("submit", onsubmit).on("submit", false);
+        console.log("btn off")
+    });
+
+</script>
+{% endblock extra_js %}

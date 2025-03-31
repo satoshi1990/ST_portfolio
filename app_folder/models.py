@@ -1,6 +1,6 @@
 from django.db import models
 
-# Create your models here.
+# カード概要テーブル
 class Card_summary(models.Model):
     class Meta:
         db_table = 'app1_card_summary'
@@ -26,7 +26,7 @@ class Card_summary(models.Model):
         ans = str(self.all_card_id) + ' / ' + self.name
         return ans
     
-# カード詳細テーブルから
+# カード詳細テーブル
 class Card_detail(models.Model):
     class Meta:
         db_table = 'app1_card_detail'
@@ -49,3 +49,35 @@ class Card_detail(models.Model):
     escape_cost  = models.IntegerField('逃げる',null=True, blank=True)
     ex           = models.BooleanField('ex', null=True, blank=True) #, default=False
 
+
+
+# pokedex テーブル
+class Pokedex(models.Model):
+    class Meta:
+        db_table = 'app1_pokedex'
+        ordering = ['pokedex_id']
+        verbose_name_plural = 'pokedex'
+
+    pokedex_id    = models.IntegerField('全国ポケモン図鑑ID', null=False, blank=False, primary_key=True)
+    name_j        = models.CharField('ポケモン名_日本語', max_length=50, null=True, blank=False)
+    name_e        = models.CharField('ポケモン名_英語', max_length=50, null=True, blank=True)
+
+    def __str__(self):
+        ans = str(self.pokedex_id) + ' / ' + self.name_j
+        return ans
+    
+# common テーブル
+class Common_ST(models.Model):
+    class Meta:
+        db_table = 'ST_common'
+        ordering = ['id']
+        verbose_name_plural = 'common_STPortfolio'
+
+    id           = models.IntegerField('ID', null=False, blank=False, primary_key=True)
+    key          = models.CharField('キー', max_length=50, null=True, blank=True)
+    value        = models.CharField('値', max_length=50, null=True, blank=True)
+
+    def __str__(self):
+        ans = str(self.id) + ' / ' + self.key + ' : '+ self.value 
+        return ans
+    

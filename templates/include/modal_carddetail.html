@@ -1,0 +1,50 @@
+<div class="modal fade" tabindex="-1" role="dialog" id="carddetailModal-{{record.all_card_id}}">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">カードの詳細</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">{# 1段目 画像 #}
+                    <div>
+                        <img id="cardDetailImg-{{ record.all_card_id}}" alt="ポケモン画像" width="192px" height="192px">
+                    </div>
+                </div>
+                <div class="row mt-2">{# 2段目 クラス name HP #}
+                    <div class="col-2">{{ record.card_class }}</div>
+                    <div class="col-3">{{ record.name }}</div>
+                    <div class="col-2">HP: {{ record.hp }}</div>{# HP#}
+                    <div class="col-2">{{ record.element }}</div>
+                </div>
+                <div class="row mt-2">{# 3段目 特性 #}
+                    <div class="col-12">特性: {{ record.ability_name }}</div>{# 特性 #}
+                    <div class="col-12">{{ record.ability_txt }}</div>{# 特性せつめい #}
+                </div>
+                <div class="row mt-2">{# 4段目 わざ1 #}
+                    <div class="col-5">わざ1: {{ record.effect1_name }}</div>{# わざ1名 #}
+                    <div class="col-2">{{ record.effect1_dmg}}</div>{# わざ1dmg #}
+                    <div class="col-12">{{ record.effect1_txt}}</div>{# わざ1text #}
+                </div>
+                <div class="row mt-2">{# 5段目 わざ2 #}                    
+                    <div class="col-5">わざ2: {{ record.effect2_name}}</div>{# わざ2name #}
+                    <div class="col-2">{{ record.effect2_dmg}}</div>{# わざ2 dmg #}
+                    <div class="col-12">{{ record.effect2_txt}}</div>{# わざ2 text #}
+                </div>
+                <div class="row mt-2">{# 6段目 弱点,逃げエネ #}
+                    <div class="col-4">弱点: {{ record.weakness }} +20</div>{# 弱点 #}
+                    <div class="col-4">逃げコスト: {{ record.escape_cost }}</div>{# 逃げエネ #}
+                </div>
+            </div>
+            <div class="modal-footer">
+                
+                <form action="{% url 'app_folder:app1_index' %}" method="post">{% csrf_token %}
+                    <input class="form-control" type="hidden" id="delete_id" name="delete_id" value={{ record.all_card_id }}>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">閉じる</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
