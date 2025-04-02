@@ -3,10 +3,10 @@ from django.views import View
 from django.db import transaction
 from django.core.paginator import Paginator
 from .models import Card_summary, Card_detail, Pokedex
-from .forms import CardRegisterForm, CardCreateForm, CardUpdateForm
+from .forms import CardCreateForm, CardUpdateForm
 from app_folder.modules import common
 import pandas as pd, glob
-import os, math
+import math
 
 # top ポートフォリオにかかわる初期設定周りで、その他便利そうなツールはこの画面に追加していく
 # 

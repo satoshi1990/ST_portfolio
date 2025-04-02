@@ -3,10 +3,13 @@ from django.conf import settings
 
 ### 定数 ###
  
-# ページ内表示レコード数
-per_page_num = 50
+per_page_num = 50         # ページ内表示レコード数
+category_pokemon = 1      # カテゴリ_ポケモン
+category_trainers = 2     # カテゴリ_ポケモン
+class_pokemon = [1,2,3]   # クラス_ポケモン
+class_trainers = [4,5,6]  # クラス_トレーナーズ
 
-# 各データセットディレクトリ
+# 各DBTable用 データセットディレクトリ
 filedir_pokedex = "./dataset/pokedex/*.csv" 
 filedir_card_summary = "./dataset/card_summary/*.csv" 
 filedir_card_detail = "./dataset/card_detail/*.csv" 

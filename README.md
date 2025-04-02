@@ -1,6 +1,5 @@
 # ST_portfolio
 
-## 概要
 ## 環境について
 pythonは3.12.5
 

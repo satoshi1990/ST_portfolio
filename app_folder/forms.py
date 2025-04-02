@@ -22,29 +22,11 @@ class CardRegisterForm(forms.Form):
     ex            = forms.BooleanField(label="ex", widget=forms.widgets.CheckboxInput, required=False,)
     all_card_id  = forms.IntegerField(label='全体カードID', widget=forms.widgets.NumberInput, min_value=1, max_value=9999, ) # 必須
 
-    category_pokemon = 1
-    category_trainers = 2
-    class_pokemon = [1,2,3]
-    class_trainers = [4,5,6]
+    category_pokemon  = common.category_pokemon
+    category_trainers = common.category_trainers
+    class_pokemon     = common.class_pokemon
+    class_trainers    = common.class_trainers
     non_element = 0
-
-
-    #--------------------------------
-    # バリデーション(全体)
-    # 見本
-    #--------------------------------
-    # def clean(self):
-    #     print("IN clean")
-    #     cleaned_data = super().clean()
-    #     card_category = cleaned_data["card_category"]
-    #     element = cleaned_data["element"]
-
-    #     if card_category == category_trainers:
-    #         if element:
-    #             self.add_error('element', "カードカテゴリがトレーナーズの際、属性は選択できません")
-    #             raise forms.ValidationError('カードカテゴリがトレーナーズの際、属性は選択できません')
-    #     return cleaned_data
-
 
     #--------------------------------
     # バリデーション(フィールド個別)
